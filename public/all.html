@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+        crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+        crossorigin=""></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="map" style="height: 300px"></div>
+    <table>
+        <tr>
+            <td>Total fangst:</td>
+            <td id="total"></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Dato</td>
+            <td>Vekt</td>
+            <td>Latitude</td>
+            <td>Longitude</td>
+        </tr>
+        <tr>
+            <td id="date"></td>
+            <td id="weight"></td>
+            <td id="latitude"></td>
+            <td id="longitude"></td>
+        </tr>
+    </table>
+    <p>
+
+    </p>
+
+    <script>
+
+        //oppretter kart
+        const map = L.map('map').setView([62.96, 8.70], 13);
+        L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+            maxZoom: 18,
+            id: 'mapbox/streets-v11',
+            tileSize: 512,
+            zoomOffset: -1,
+            accessToken: 'pk.eyJ1IjoibWFydGluZWludW0iLCJhIjoiY2t5dmhhM2NuMDZ3dTJxbzBjMDIyNHR2ZiJ9.TzmH8pV7XlAnbLrig24zsw'
+        }).addTo(map);
+        //definerer marker
+        var myIcon = L.icon({
+            iconUrl: '/icon/fish.png',
+            iconSize: [50, 39],
+            iconAnchor: [25, 20]
+        });
+
+        L.marker([0, 0], { icon: myIcon }).addTo(map);
+
+
+        //Henter data fra databasen
+        getData();
+        //fetch default er "GET"
+        async function getData() {
+            const response = await fetch("/allData");
+            const data = await response.json();
+            console.log(data);
+            let totalWeight = null;
+            let dateString = "";
+            let weightString = "";
+            let latitudeString = "";
+            let longitudeString = "";
+            for (item of data) {
+                totalWeight += item.vekt;
+                const date = new Date(item.date).toLocaleString();
+                dateString += date + "<br>";
+                weightString += item.vekt + "<br>";
+                latitudeString += item.latitude + "<br>";
+                longitudeString += item.longitude + "<br>";
+            }
+            document.getElementById("total").innerHTML = totalWeight;
+            document.getElementById("date").innerHTML = dateString;
+            document.getElementById("weight").innerHTML = weightString;
+            document.getElementById("latitude").innerHTML = latitudeString;
+            document.getElementById("longitude").innerHTML = longitudeString;
+
+            //plotter alle punkt på kartet
+            for (item of data) {
+                const marker = L.marker([item.latitude, item.longitude], { icon: myIcon }).addTo(map);
+                marker.bindPopup(item.vekt.toString());
+            }
+        }
+    </script>
+</body>
+
+</html>

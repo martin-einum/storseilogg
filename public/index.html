@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1'>Fiskelogg</h1>
+        <form>
+            <label>Vekt:</label>
+            <select id="numbers">
+                <option value="1">1</option>
+                <option value="1.5">1.5</option>
+                <option value="2">2</option>
+                <option value="2.5">2.5</option>
+                <option value="3">3</option>
+                <option value="3.5">3.5</option>
+                <option value="4">4</option>
+                <option value="4.5">4.5</option>
+                <option value="5">5</option>
+                <option value="5.5">5.5</option>
+                <option value="6">6</option>
+            </select>
+            <br><br>
+        </form>
+        <button onclick="sendData()">Send</button>
+
+        <script>
+
+
+            let catchData = {   //objektet som skal inneholde fangstdata
+            }
+            function sendData() {
+
+                //HENTER KOORDINATER
+                if ('geolocation' in navigator) {
+                    console.log("geolocation ok");
+                    //må være async (pga await under)
+                    navigator.geolocation.getCurrentPosition(async (position) => {
+                        const lat = position.coords.latitude;
+                        const long = position.coords.longitude;
+                        console.log(lat, long);
+
+                        catchData.vekt = parseFloat(document.getElementById("numbers").value);
+                        catchData.date = Date.now();
+                        catchData.latitude = lat;
+                        catchData.longitude = long;
+
+                        const options = {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify(catchData)
+                        }
+                        const response = await fetch("/fiskelogg", options); //sender options og venter på respons
+                        const data = await response.json();  //gjør respons om til json-format
+                        console.log(data);
+                    });
+                } else {
+                    console.log("geolocation not ok");
+                }
+
+
+
+
+
+            }
+        </script>
+</body>
+
+</html>

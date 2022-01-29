@@ -1,0 +1,16 @@
+{
+  "name": "fiskelogg",
+  "version": "1.0.0",
+  "description": "Innstaller npm init",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "M Einum",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.2",
+    "nedb": "^1.8.0"
+  }
+}
