@@ -4,7 +4,7 @@ const Datastore = require("nedb");
 
 const app = express();  //får tilgang til express-biblioteket
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3000;  //environment port (på ekstern server) eller localhost 3000
 app.listen(port, () => {
     console.log("Starting listening");
 });
