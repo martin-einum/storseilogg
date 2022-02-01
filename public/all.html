@@ -63,10 +63,14 @@
 
 
         //Henter data fra databasen
+        //initieres når siden åpnes
         getData();
         //fetch default er "GET"
         async function getData() {
-            const response = await fetch("/allData");
+            const response = await fetch("/allData"); //henter data fra index.js
+            console.log(response);
+            //gjør om til javascript objekt når hele strømmen er lest
+            //asynchronous, returns a promise object (JSON.parse() is synchronous)
             const data = await response.json();
             console.log(data);
             let totalWeight = null;
@@ -82,6 +86,7 @@
                 latitudeString += item.latitude + "<br>";
                 longitudeString += item.longitude + "<br>";
             }
+
             document.getElementById("total").innerHTML = totalWeight;
             document.getElementById("date").innerHTML = dateString;
             document.getElementById("weight").innerHTML = weightString;

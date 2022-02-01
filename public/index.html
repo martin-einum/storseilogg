@@ -50,10 +50,9 @@
                 console.log("geolocation ok");
                 //må være async (pga await under)
                 navigator.geolocation.getCurrentPosition(async (position) => {
+                    //klargjør all data som skal sendes
                     const lat = position.coords.latitude;
                     const long = position.coords.longitude;
-                    console.log(lat, long);
-
                     const kg = parseFloat(document.getElementById("numbers").value);
                     const hg = parseFloat(document.getElementById("numbers2").value);
                     catchData.vekt = kg + (hg / 10);
@@ -66,11 +65,15 @@
                         headers: {
                             "Content-Type": "application/json"
                         },
+                        //må sendes til serve som string
+                        //gjør om fra javascript object til json string
                         body: JSON.stringify(catchData)
                     }
                     const response = await fetch("/fiskelogg", options); //sender options og venter på respons
-                    const data = await response.json();  //gjør respons om til json-format
-                    console.log(data);
+                    //gjør om til javascript objekt når hele strømmen er lest
+                    //asynchronous, returns a promise object (JSON.parse() is synchronous)
+                    const responseData = await response.json();
+                    console.log(responseData);
                 });
             } else {
                 console.log("geolocation not ok");
